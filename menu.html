@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Macho DUI Menu</title>
+<style>
+body { margin:0; font-family:Arial; background:rgba(0,0,0,0.8); color:#fff; }
+#menu { width:300px; padding:10px; }
+.category { font-weight:bold; margin-top:10px; font-size:18px; }
+.item { padding:5px; cursor:pointer; }
+.item.selected { background:#3498db; }
+</style>
+</head>
+<body>
+<div id="menu">
+  <div class="category" data-index="0">Category 1</div>
+  <div class="item" data-index="0-0">Option 1</div>
+  <div class="item" data-index="0-1">Option 2</div>
+
+  <div class="category" data-index="1">Category 2</div>
+  <div class="item" data-index="1-0">Option 3</div>
+  <div class="item" data-index="1-1">Option 4</div>
+</div>
+
+<script>
+let items = Array.from(document.querySelectorAll('.item'));
+let currentIndex = 0;
+items[currentIndex].classList.add('selected');
+
+// Arrow key navigation
+document.addEventListener('keydown', (e)=>{
+    items[currentIndex].classList.remove('selected');
+    if(e.key === 'ArrowDown') currentIndex = (currentIndex+1)%items.length;
+    if(e.key === 'ArrowUp') currentIndex = (currentIndex-1+items.length)%items.length;
+    if(e.key === 'Enter') executeItem(items[currentIndex]);
+    items[currentIndex].classList.add('selected');
+});
+
+function executeItem(item){
+    const index = item.dataset.index;
+    // Send to Lua via DUI
+    window.postMessage({ action: 'execute', item: index }, '*');
+    console.log("Executed:", index);
+}
+
+// Receive messages from Lua
+window.addEventListener('message', (event)=>{
+    const data = event.data;
+    if(data.action === 'updateText'){
+        const el = document.querySelector('#menu');
+        el.innerHTML = `<div style="margin-bottom:10px;">${data.text}</div>` + el.innerHTML;
+    }
+});
+</script>
+</body>
+</html>
