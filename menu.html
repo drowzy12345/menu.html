@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Macho DUI Menu</title>
+    <style>
+        body {
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-family: sans-serif;
+            text-align: center;
+        }
+        #content {
+            margin-top: 20%;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">Menu Loaded</div>
+
+    <script>
+        window.addEventListener("message", (event) => {
+            const data = event.data;
+            if (data.action === "updateText") {
+                document.getElementById("content").innerText = data.text;
+            }
+        });
+    </script>
+</body>
+</html>
